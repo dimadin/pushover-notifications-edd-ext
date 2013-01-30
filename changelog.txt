@@ -1,0 +1,20 @@
+== Changelog ==
+= 1.2.1 =
+Fixing bug in 1.1.2 where core plugin class is not accessible during a core plugin update
+
+= 1.2 =
+* Option for sales notification to be cashregister sound
+* Allowing discount code specific notifications
+* Fixing an issue with cron scheduling.
+
+= 1.1.1 =
+* Choose which discount codes you'd like to get alerts for.
+* Fixed a spelling error in the Admin.
+
+= 1.1 =
+* Discount Code notifications - You can now get notifications when discount codes reach %'s of their max usage or are nearing the 14, 7, and 1 day mark of their expiration. Future versions will allow you to do this for individual discount codes, instead of just all codes with max usages or expiration dates.
+* Moved from procedural coding style to a OOP method.
+* Add this changelog.txt file so I can include the changes made.
+* Fixed a few spelling errors in the admin.
+* PO/MO Files updated.
+* Added a core version check with a minimum version of 1.7 for the Pushover Notifications plugin
