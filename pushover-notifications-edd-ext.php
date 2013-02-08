@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.2.1
+Version: 1.2.2
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -14,7 +14,7 @@ define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.2.1' );
+define( 'CKPN_EDD_VERSION', '1.2.2' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
@@ -50,7 +50,7 @@ class CKPushoverNotificationsEDD {
 
 			// Non-Admin Hooks
 			add_action( 'init', array( $this, 'frontend_hooks' ) );
-			add_action( 'init', array( $this, 'ckpn_edd_check_for_update' ) );
+			add_action( 'admin_init', array( $this, 'ckpn_edd_check_for_update' ) );
 			add_action( 'init', array( $this, 'ckpn_edd_loaddomain' ) );
 
 			// EDD Hooks
@@ -87,6 +87,9 @@ class CKPushoverNotificationsEDD {
 		if ( $options !== NULL )
 			return $options;
 
+		if ( !function_exists( 'ckpn_get_options' ) )
+			return $options;
+
 		$options = ckpn_get_options();
 
 		return $options;
@@ -121,6 +124,8 @@ class CKPushoverNotificationsEDD {
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) ) {
 			$this->determine_cron_schedule();
 			add_action( 'ckpn_notification_checkbox_filter', array( $this, 'add_settings_fields' ), 99 );
+			add_action( 'ckpn_notification_licenses_page', array( $this, 'add_license_field' ) );
+			add_filter( 'ckpn_licenses_array', array( $this, 'add_license_key_option' ), 10, 1 );
 		} else {
 			add_action( 'admin_notices', array( $this, 'missing_core_nag' ) );
 		}
@@ -230,11 +235,10 @@ class CKPushoverNotificationsEDD {
 	 */
 	public function add_settings_fields() {
 		$current = $this->getOptions();
-?>
+		?>
 		<tr valign="top">
 			<th scope="row"><?php _e( 'Easy Digital Downloads Settings', CKPN_TEXT_DOMAIN ); ?></th>
 			<td>
-				<input type="text" name="ckpn_pushover_notifications_settings[edd_ckpn_license_key]" placeholder="<?php _e( 'Enter EDD Extension License Key', CKPN_TEXT_DOMAIN ); ?>" size="50" value="<?php echo $current['edd_ckpn_license_key']; ?>" /><br />
 				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php if ( $current['edd_complete_purchase'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'New Sales', CKPN_TEXT_DOMAIN ); ?><br />
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php if ( $current['new_sales_cashregister'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'User Cash Register Sound?', CKPN_TEXT_DOMAIN ); ?><br />
 				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php if ( $current['edd_daily_sales'] == '1' ) { ?>checked="checked"<?php } ?> /> <span><?php _e( 'Daily Sales Report', CKPN_TEXT_DOMAIN ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<br />
@@ -250,14 +254,26 @@ class CKPushoverNotificationsEDD {
 					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_7]" value="1" <?php if ( $current['edd_discount_days_7'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( '7 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
 					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_1]" value="1" <?php if ( $current['edd_discount_days_1'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( '1 Day', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
 				</div>
-				<br />
-				<sup>&dagger;</sup> <a href="#" onClick="jQuery( '#cron-help' ).toggle(); return false;"><?php _e( 'Not receiving reports?', CKPN_TEXT_DOMAIN ); ?></a><br />
-				<div id="cron-help" style="display:none">
-					&nbsp;&nbsp;&nbsp;&nbsp;<?php _e( 'This feature uses WP-Cron to run. If your site doesn\'t get much traffic, the scheduled task to send your reports might not execute at the specified time. There are 2 options:', CKPN_TEXT_DOMAIN ); ?><br />
-					&nbsp;&nbsp;&nbsp;&nbsp;<?php _e( '1. You may need to use the <a href="http://codecanyon.net/item/improved-cron/176543?ref=cklosowski" target="_blank">Improved Cron</a> plugin to help scheduled tasks run.', CKPN_TEXT_DOMAIN ); ?><br />
-					&nbsp;&nbsp;&nbsp;&nbsp;<?php _e( '2. If you have access to create cron jobs and know how, you can use the following cron to execute wp-cron.php every hour.', CKPN_TEXT_DOMAIN ); ?><br />
-					&nbsp;&nbsp;&nbsp;&nbsp;<code>0 */1 * * * GET <?php echo home_url(); ?>/wp-cron.php</code>
-				</div>
+			</td>
+		</tr>
+		<?php
+	}
+
+	public function add_license_key_option( $licenses ) {
+		$licenses[] = '_edd_ckpn_license_key';
+
+		return $licenses;
+	}
+
+	public function add_license_field() {
+		$current_key = get_option( '_edd_ckpn_license_key' );
+		if ( !$current_key )
+			$current_key = '';
+		?>
+		<tr valign="top">
+			<th scope="row"><?php _e( 'Pushover Notifications for Easy Digital Downloads', CKPN_TEXT_DOMAIN ); ?></th>
+			<td>
+				<input type="text" name="_edd_ckpn_license_key" placeholder="<?php _e( 'Enter Pushover Notifications for EDD Key', CKPN_TEXT_DOMAIN ); ?>" size="50" value="<?php echo $current_key; ?>" />
 			</td>
 		</tr>
 		<?php
@@ -603,8 +619,15 @@ class CKPushoverNotificationsEDD {
 	 * @return void
 	 */
 	public function ckpn_edd_check_for_update() {
-		$current_settings = $this->getOptions();
-		$edd_sl_license_key = isset( $current_settings['edd_ckpn_license_key'] ) ? trim( $current_settings['edd_ckpn_license_key'] ) : '';
+		$current_settings = get_option( 'ckpn_pushover_notifications_settings' );
+		if ( !get_option( '_edd_ckpn_license_key' ) && isset( $current_settings['edd_ckpn_license_key'] ) ) {
+			$edd_ext_key = $current_settings['edd_ckpn_license_key'];
+			update_option( '_edd_ckpn_license_key', $edd_ext_key );
+		} else {
+			$edd_ext_key = get_option( '_edd_ckpn_license_key' );
+		}
+
+		$edd_sl_license_key = isset( $edd_ext_key ) ? trim( $edd_ext_key ) : '';
 
 		// setup the updater
 		$edd_updater = new EDD_SL_Plugin_Updater( EDD_CKPN_SL_STORE_API_URL, __FILE__, array(
@@ -632,7 +655,7 @@ class CKPushoverNotificationsEDD {
 		if ( isset( $current_options['ckpn_edd_active'] ) && $current_options['ckpn_edd_active'] == 'valid' )
 			return;
 
-		$license = sanitize_text_field( $current_options['edd_ckpn_license_key'] );
+		$license = sanitize_text_field( get_option( '_edd_ckpn_license_key' ) );
 
 		// data to send in our API request
 		$api_params = array(
