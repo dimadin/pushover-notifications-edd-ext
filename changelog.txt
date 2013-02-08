@@ -1,6 +1,12 @@
 == Changelog ==
+= 1.2.2 =
+* Prep work for 1.7.4 core plugin
+* Fixed some spelling errors
+* Added checks for core plugin
+* Moved License Key into own setting (instead of within pushover settings)
+
 = 1.2.1 =
-Fixing bug in 1.1.2 where core plugin class is not accessible during a core plugin update
+* Fixing bug in 1.1.2 where core plugin class is not accessible during a core plugin update
 
 = 1.2 =
 * Option for sales notification to be cashregister sound
