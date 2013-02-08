@@ -240,7 +240,7 @@ class CKPushoverNotificationsEDD {
 			<th scope="row"><?php _e( 'Easy Digital Downloads Settings', CKPN_TEXT_DOMAIN ); ?></th>
 			<td>
 				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php if ( $current['edd_complete_purchase'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'New Sales', CKPN_TEXT_DOMAIN ); ?><br />
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php if ( $current['new_sales_cashregister'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'User Cash Register Sound?', CKPN_TEXT_DOMAIN ); ?><br />
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php if ( $current['new_sales_cashregister'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'Use Cash Register Sound?', CKPN_TEXT_DOMAIN ); ?><br />
 				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php if ( $current['edd_daily_sales'] == '1' ) { ?>checked="checked"<?php } ?> /> <span><?php _e( 'Daily Sales Report', CKPN_TEXT_DOMAIN ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<br />
 				<input type="checkbox" id="edd_discount_notices" name="ckpn_pushover_notifications_settings[edd_discount_notices]" value="1" <?php if ( $current['edd_discount_notices'] == '1' ) { ?>checked="checked"<?php } ?> /> Enable Discount Notifications
 				<div id="discount-code-settings" <?php if ( !$current['edd_discount_notices'] ) { ?>style="display: none"<?php } ?>>
