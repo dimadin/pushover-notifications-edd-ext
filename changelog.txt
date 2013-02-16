@@ -1,4 +1,8 @@
 == Changelog ==
+= 1.2.3 =
+* Sends Pushover notificaitons to Commission Users if they have a key in their profile
+*
+
 = 1.2.2 =
 * Prep work for 1.7.4 core plugin
 * Fixed some spelling errors

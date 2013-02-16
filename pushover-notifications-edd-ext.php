@@ -56,6 +56,9 @@ class CKPushoverNotificationsEDD {
 			// EDD Hooks
 			add_action( 'edd_update_payment_status', array( $this, 'send_new_sale_notification' ), 10, 3 );
 			add_action( 'edd_update_payment_status', array( $this, 'send_discount_usage' ), 10, 4 );
+
+			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) )
+				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
 		}
 	}
 
@@ -451,6 +454,42 @@ class CKPushoverNotificationsEDD {
 				$this->send_notification( $args );
 			}
 		}
+	}
+
+	/*
+	 * send_commission_alert
+	 *
+	 * Hooks into the EDD Commissions extension and notifies the assigned user
+	 * of their sale
+	 *
+	 * @param user_id - int - User ID who is getting the commission
+	 * @param commission_amount - int - The amout earned
+	 * @param rate - int - The commission rate for this user
+	 * @param download_id - int - Post ID for the Download purchased
+	 */
+	public function send_commission_alert( $user_id, $commission_amount, $rate, $download_id ) {
+		global $edd_options;
+
+		$from_name = isset( $edd_options['from_name'] ) ? $edd_options['from_name'] : get_bloginfo( 'name' );
+
+		/* send an email alert of the sale */
+		$user_key = get_user_meta( $user_id, 'ckpn_user_key', true );
+
+		if ( ! $user_key )
+			return;
+
+		$title = sprintf( __( 'You have made a new sale on %s!', CKPN_TEXT_DOMAIN ), stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) );
+		$title = apply_filters( 'ckpn_edd_commissions_title', $title );
+
+		$message  = __( 'Item sold: ', CKPN_TEXT_DOMAIN ) . get_the_title( $download_id ) . "\n";
+		$message .= __( 'Amount: ', CKPN_TEXT_DOMAIN ) . " " . html_entity_decode( edd_currency_filter( edd_format_amount( $commission_amount ) ) ) . "\n";
+		$message .= __( 'Commission Rate: ', CKPN_TEXT_DOMAIN ) . $rate . "%\n";
+
+		$message = apply_filters( 'ckpn_edd_commissions_message', $message, $download_id, $user_id, $commission_amount, $rate );
+
+		$args = array( 'user' => $user_key, 'title' => $title, 'message' => $message, 'sound' => 'cashregister' );
+
+		$this->send_notification( $args );
 	}
 
 	/*
