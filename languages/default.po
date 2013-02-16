@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pushover Notfications for Easy Digital Downloads\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-08 06:18-0700\n"
-"PO-Revision-Date: 2013-02-08 06:18-0700\n"
+"POT-Creation-Date: 2013-02-16 07:39-0700\n"
+"PO-Revision-Date: 2013-02-16 07:39-0700\n"
 "Last-Translator: Chris Klosowski <cklosowski@gmail.com>\n"
 "Language-Team: Chris Klosowski <cklosowski@gmail.com>\n"
 "Language: English\n"
@@ -15,139 +15,156 @@ msgstr ""
 "X-Poedit-Basepath: .\n"
 "X-Poedit-SearchPath-0: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext\n"
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:143
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:146
 msgid "To use Pushover Notifications for Easy Digital Downloads you need to also install and activate the free plugin Pushover Notifications for WordPress."
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:155
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:158
 msgid "Your Pushover Notifications core plugin is out of date. Please update it in order to use Pushover Notifiations for Easy Digital Downloads."
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:240
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:243
 msgid "Easy Digital Downloads Settings"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:242
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:245
 msgid "New Sales"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:243
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:246
 msgid "Use Cash Register Sound?"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:244
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:247
 msgid "Daily Sales Report"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:253
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:256
 msgid "14 Days"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:254
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:257
 msgid "7 Days"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:255
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:258
 msgid "1 Day"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:274
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:277
 msgid "Pushover Notifications for Easy Digital Downloads"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:276
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:279
 msgid "Enter Pushover Notifications for EDD Key"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:328
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:331
 #, php-format
 msgid "%s: Earnings Report %s"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:329
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:332
 #, php-format
 msgid "Earnings: %s %sSales: %d"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:394
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:397
 #, php-format
 msgid "%s: Discount Codes"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:401
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:404
 msgid "tomorrow"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:402
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:405
 #, php-format
 msgid "You have a discount code expiring %s"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:404
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:407
 #, php-format
 msgid "You have %d codes expiring soon"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:406
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:409
 msgid "expires"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:407
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:410
 #, php-format
 msgid ", %d of which %s tomorrow"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:435
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:438
 #, php-format
 msgid "%s: New Sale!"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:441
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:444
 msgid "Discount: "
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:443
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:446
 #, php-format
 msgid "Total Sale: %s"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:506
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:481
+#, php-format
+msgid "You have made a new sale on %s!"
+msgstr ""
+
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:484
+msgid "Item sold: "
+msgstr ""
+
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:485
+msgid "Amount: "
+msgstr ""
+
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:486
+msgid "Commission Rate: "
+msgstr ""
+
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:545
 #, php-format
 msgid "%s: Discount Code Depleated"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:507
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:546
 #, php-format
 msgid "The discount code %s has reached it's maximum usage."
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:520
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:559
 #, php-format
 msgid "%s: Discount Code %s"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:521
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:560
 #, php-format
 msgid "%s of codes have been redeemed. %d codes remain."
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:552
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:581
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:591
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:620
 msgid "Usage Notifications"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:556
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:585
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:595
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:624
 msgid "On"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:557
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:586
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:596
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:625
 msgid "Off"
 msgstr ""
 
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:559
-#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:588
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:598
+#: /var/www/wordpress/wp-content/plugins/pushover-notifications-edd-ext/pushover-notifications-edd-ext.php:627
 msgid "Be notified of this discount code's usage &amp; expiration"
 msgstr ""
 
