@@ -1,4 +1,9 @@
 == Changelog ==
+= 1.2.4 =
+* NEW: Notifications of sales and discount codes goes to users with the view_shop_reports capability, and the Administrator Pushover Key. The list of user ID's can be augmented with the ckpn_sales_alert_capability (The capability needed to get alerts) and ckpn_users_to_alert_keys (List of Pushover User keys that were found) filters
+* FIX: Admin Notices now use add_settings_error instead of sprintf
+* FIX: Checkboxes converted to use the 'checked' function instead of if statements
+
 = 1.2.3 =
 * Sends Pushover Notifications to Commission Users if they have a key in their profile
 

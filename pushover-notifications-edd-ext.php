@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.2.3
+Version: 1.2.4
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -14,7 +14,7 @@ define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.2.3' );
+define( 'CKPN_EDD_VERSION', '1.2.4' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
@@ -143,7 +143,9 @@ class CKPushoverNotificationsEDD {
 	 * @return void
 	 */
 	function missing_core_nag() {
-		printf( '<div class="error"> <p> %s </p> </div>', esc_html__( 'To use Pushover Notifications for Easy Digital Downloads you need to also install and activate the free plugin Pushover Notifications for WordPress.', CKPN_TEXT_DOMAIN ) );
+		add_settings_error( 'ckpn-edd-notices', 'missing-ckpn', sprintf( __( 'To use Pushover Notifications for Easy Digital Downloads you need to also install and activate the free plugin <a href="%s">Pushover Notifications for WordPress</a>.', CKPN_TEXT_DOMAIN ), admin_url( 'plugin-install.php?tab=search&type=term&s=Pushover+Notifications+for+WordPress&plugin-search-input=Search+Plugins' ) ) );
+		
+		settings_errors( 'ckpn-edd-notices' );
 	}
 
 	/*
@@ -155,7 +157,9 @@ class CKPushoverNotificationsEDD {
 	 * @return void
 	 */
 	function core_out_of_date_nag() {
-		printf( '<div class="error"> <p> %s </p> </div>', esc_html__( 'Your Pushover Notifications core plugin is out of date. Please update it in order to use Pushover Notifiations for Easy Digital Downloads.', CKPN_TEXT_DOMAIN ) );
+		add_settings_error( 'ckpn-notices', 'out-of-date-ckpn', sprintf( __( 'Your Pushover Notifications core plugin is out of date. Please <a href="%s">update</a> it in order to use Pushover Notifiations for Easy Digital Downloads.', CKPN_TEXT_DOMAIN ), admin_url( 'update-core.php' ) ) );
+		
+		settings_errors( 'ckpn-notices' );
 	}
 
 	/*
@@ -242,20 +246,20 @@ class CKPushoverNotificationsEDD {
 		<tr valign="top">
 			<th scope="row"><?php _e( 'Easy Digital Downloads Settings', CKPN_TEXT_DOMAIN ); ?></th>
 			<td>
-				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php if ( $current['edd_complete_purchase'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'New Sales', CKPN_TEXT_DOMAIN ); ?><br />
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php if ( $current['new_sales_cashregister'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( 'Use Cash Register Sound?', CKPN_TEXT_DOMAIN ); ?><br />
-				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php if ( $current['edd_daily_sales'] == '1' ) { ?>checked="checked"<?php } ?> /> <span><?php _e( 'Daily Sales Report', CKPN_TEXT_DOMAIN ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<br />
-				<input type="checkbox" id="edd_discount_notices" name="ckpn_pushover_notifications_settings[edd_discount_notices]" value="1" <?php if ( $current['edd_discount_notices'] == '1' ) { ?>checked="checked"<?php } ?> /> Enable Discount Notifications
+				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php checked( $current['edd_complete_purchase'], '1', true ); ?> /> <?php _e( 'New Sales', CKPN_TEXT_DOMAIN ); ?><br />
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php checked( $current['new_sales_cashregister'], '1', true ); ?> /> <?php _e( 'Use Cash Register Sound?', CKPN_TEXT_DOMAIN ); ?><br />
+				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php checked( $current['edd_daily_sales'], '1', true ); ?> /> <span><?php _e( 'Daily Sales Report', CKPN_TEXT_DOMAIN ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<br />
+				<input type="checkbox" id="edd_discount_notices" name="ckpn_pushover_notifications_settings[edd_discount_notices]" value="1" <?php checked( $current['edd_discount_notices'], '1', true ); ?> /> Enable Discount Notifications
 				<div id="discount-code-settings" <?php if ( !$current['edd_discount_notices'] ) { ?>style="display: none"<?php } ?>>
 					<strong>Notify me when a discount code usage percentage reaches:</strong><br />
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_25]" value="1" <?php if ( $current['edd_discount_usage_25'] == '1' ) { ?>checked="checked"<?php } ?> /> 25%&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_50]" value="1" <?php if ( $current['edd_discount_usage_50'] == '1' ) { ?>checked="checked"<?php } ?> /> 50%&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_75]" value="1" <?php if ( $current['edd_discount_usage_75'] == '1' ) { ?>checked="checked"<?php } ?> /> 75%&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_100]" value="1" <?php if ( $current['edd_discount_usage_100'] == '1' ) { ?>checked="checked"<?php } ?> /> 100%<br />
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_25]" value="1" <?php checked( $current['edd_discount_usage_25'], '1', true ); ?> /> 25%&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_50]" value="1" <?php checked( $current['edd_discount_usage_50'], '1', true ); ?> /> 50%&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_75]" value="1" <?php checked( $current['edd_discount_usage_75'], '1', true ); ?> /> 75%&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_100]" value="1" <?php checked( $current['edd_discount_usage_100'], '1', true ); ?> /> 100%<br />
 					<strong>Notify me when a discount code has X Days left:</strong> <sup>&dagger;</sup><br />
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_14]" value="1" <?php if ( $current['edd_discount_days_14'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( '14 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_7]" value="1" <?php if ( $current['edd_discount_days_7'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( '7 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_1]" value="1" <?php if ( $current['edd_discount_days_1'] == '1' ) { ?>checked="checked"<?php } ?> /> <?php _e( '1 Day', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_14]" value="1" <?php checked( $current['edd_discount_days_14'], '1', true ); ?> /> <?php _e( '14 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_7]" value="1" <?php checked( $current['edd_discount_days_7'], '1', true ); ?> /> <?php _e( '7 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_1]" value="1" <?php checked( $current['edd_discount_days_1'], '1', true ); ?> /> <?php _e( '1 Day', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
 				</div>
 			</td>
 		</tr>
@@ -332,7 +336,13 @@ class CKPushoverNotificationsEDD {
 		$message = sprintf( __( 'Earnings: %s %sSales: %d', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( edd_get_earnings_by_date( $day, $month, $year ) ) ), "\n", $sales_count );
 
 		$args = array( 'title' => $title, 'message' => $message );
-		$this->send_notification( $args );
+
+		$notification_users = $this->get_users_to_alert();
+
+		foreach ( $notification_users as $user ) {
+			$args['user'] = $user;
+			$this->send_notification( $args );
+		}
 	}
 
 	/*
@@ -412,7 +422,13 @@ class CKPushoverNotificationsEDD {
 		}
 
 		$args = array( 'title' => $title, 'message' => $message );
-		$this->send_notification( $args );
+
+		$notification_users = $this->get_users_to_alert();
+
+		foreach ( $notification_users as $user ) {
+			$args['user'] = $user;
+			$this->send_notification( $args );
+		}
 	}
 
 	/*
@@ -451,7 +467,12 @@ class CKPushoverNotificationsEDD {
 				if ( $current_options['new_sales_cashregister'] )
 					$args['sound'] = 'cashregister';
 
-				$this->send_notification( $args );
+				$notification_users = $this->get_users_to_alert();
+
+				foreach ( $notification_users as $user ) {
+					$args['user'] = $user;
+					$this->send_notification( $args );
+				}
 			}
 		}
 	}
@@ -565,7 +586,13 @@ class CKPushoverNotificationsEDD {
 
 				if ( $selected_pct != NULL && $current_options[$option_key] ) {
 					$args = array( 'title' => $title, 'message' => $message );
-					$this->send_notification( $args );
+
+					$notification_users = $this->get_users_to_alert();
+
+					foreach ( $notification_users as $user ) {
+						$args['user'] = $user;
+						$this->send_notification( $args );
+					}
 				}
 			}
 		}
@@ -644,6 +671,38 @@ class CKPushoverNotificationsEDD {
 	public function save_discount( $discount_details, $discount_id ) {
 		$value = ( $_POST['discount-notifications'] == 'on' ) ? 'on' : 'off';
 		update_post_meta( $discount_id, '_ckpn_edd_discount_notify', $value );
+	}
+
+	/*
+	 * get_users_to_alert
+	 *
+	 * Gets Administrators, Shop Managers, and Site Admins if MS
+	 *
+	 * @uses get_users
+	 *
+	 * @return array Users who should receive alerts
+	 */
+	public function get_users_to_alert() {
+		$users = get_users( array( 'fields' => 'ID' ) );
+
+		$options = ckpn_get_options();
+
+		// Add the default admin key from settings
+		$user_keys = array( $options['api_key'] );
+
+		$alert_capability = apply_filters( 'ckpn_sales_alert_capability', 'view_shop_reports' );
+
+		// Find the users who can view_shop_reports and have a user key
+		foreach ( $users as $user ) {
+			if ( !user_can( $user, $alert_capability ) )
+				continue;
+
+			$user_key = get_user_meta( $user, 'ckpn_user_key', true );
+			if ( $user_key )
+				$user_keys[] = $user_key;
+		}
+
+		return array_unique( apply_filters( 'ckpn_users_to_alert_keys', $user_keys ) );
 	}
 
 	/*************************
