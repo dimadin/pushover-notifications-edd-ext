@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.2.5
+Version: 1.2.6
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -14,7 +14,7 @@ define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.2.5' );
+define( 'CKPN_EDD_VERSION', '1.2.6' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
@@ -774,10 +774,13 @@ class CKPushoverNotificationsEDD {
 	 * Activate the extension with Easy Ditital Downloads Licenseing API
 	 */
 	public function ckpn_edd_activate_license() {
-		if ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] !== 'pushover-notifications' )
+		if ( !isset( $_REQUEST['page'] ) || ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] !== 'pushover-notifications' ) )
 			return;
 
-		if ( isset( $_REQUEST['settings-updated'] ) && $_REQUEST['settings-updated'] !== 'true' )
+		if ( !isset( $_REQUEST['tab'] ) || ( isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] !== 'licenses' ) )
+			return;
+
+		if ( !isset( $_REQUEST['action'] ) || ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] !== 'update' ) )
 			return;
 
 		$current_options = $this->getOptions();
