@@ -14,17 +14,17 @@ define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.2.6' );
+define( 'CKPN_EDD_VERSION', '1.2.7' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
 define( 'CKPN_EDD_URL', plugins_url( 'pushover-notifications-edd-ext', 'pushover-notifications-edd-ext.php' ) );
 
-define( 'EDD_CKPN_SL_STORE_API_URL', 'http://easydigitaldownloads.com' );
 define( 'EDD_CKPN_SL_PRODUCT_NAME', 'Pushover Notifications for Easy Digital Downloads' );
 
-if ( !class_exists( 'EDD_SL_Plugin_Updater' ) )
-	include CKPN_EDD_PATH . '/includes/EDD_SL_Plugin_Updater.php';
+// Load the EDD license handler only if not already loaded. Must be placed in the main plugin file
+if( ! class_exists( 'EDD_License' ) )
+    include( dirname( __FILE__ ) . '/includes/EDD_License_Handler.php' );
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -35,13 +35,15 @@ class CKPushoverNotificationsEDD {
 		if ( !$this->checkCoreVersion() ) {
 			add_action( 'admin_notices', array( $this, 'core_out_of_date_nag' ) );
 		} else {
+			// Instantiate the licensing / updater. Must be placed in the main plugin file
+			$license = new EDD_License( __FILE__, EDD_CKPN_SL_PRODUCT_NAME, CKPN_EDD_VERSION, 'Chris Klosowski' );
+
 			// Unify with the settings
 			add_filter( 'ckpn_options_defaults', array( $this, 'add_defaults' ), 1 );
 			register_deactivation_hook( 'pushover-notifications-edd-ext/pushover-notifications-edd-ext.php', array( $this, 'on_deactivate' ) );
 			// Admin Hooks
 
 			add_action( 'admin_init', array( $this, 'admin_hooks' ) );
-			add_action( 'admin_init', array( $this, 'ckpn_edd_activate_license' ) );
 			add_action( 'admin_enqueue_scripts', array( $this, 'load_cusom_js' ) );
 			add_action( 'edd_edit_discount_form_bottom', array( $this, 'discount_edit_form' ), 10, 2 );
 			add_action( 'edd_add_discount_form_bottom', array( $this, 'discount_add_form' ) );
@@ -50,7 +52,6 @@ class CKPushoverNotificationsEDD {
 
 			// Non-Admin Hooks
 			add_action( 'init', array( $this, 'frontend_hooks' ) );
-			add_action( 'admin_init', array( $this, 'ckpn_edd_check_for_update' ) );
 			add_action( 'init', array( $this, 'ckpn_edd_loaddomain' ) );
 
 			// EDD Hooks
@@ -127,8 +128,6 @@ class CKPushoverNotificationsEDD {
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) ) {
 			$this->determine_cron_schedule();
 			add_action( 'ckpn_notification_checkbox_filter', array( $this, 'add_settings_fields' ), 99 );
-			add_action( 'ckpn_notification_licenses_page', array( $this, 'add_license_field' ) );
-			add_filter( 'ckpn_licenses_array', array( $this, 'add_license_key_option' ), 10, 1 );
 		} else {
 			add_action( 'admin_notices', array( $this, 'missing_core_nag' ) );
 		}
@@ -261,26 +260,6 @@ class CKPushoverNotificationsEDD {
 					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_7]" value="1" <?php checked( $current['edd_discount_days_7'], '1', true ); ?> /> <?php _e( '7 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
 					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_1]" value="1" <?php checked( $current['edd_discount_days_1'], '1', true ); ?> /> <?php _e( '1 Day', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
 				</div>
-			</td>
-		</tr>
-		<?php
-	}
-
-	public function add_license_key_option( $licenses ) {
-		$licenses[] = '_edd_ckpn_license_key';
-
-		return $licenses;
-	}
-
-	public function add_license_field() {
-		$current_key = get_option( '_edd_ckpn_license_key' );
-		if ( !$current_key )
-			$current_key = '';
-		?>
-		<tr valign="top">
-			<th scope="row"><?php _e( 'Pushover Notifications for Easy Digital Downloads', CKPN_TEXT_DOMAIN ); ?></th>
-			<td>
-				<input type="text" name="_edd_ckpn_license_key" placeholder="<?php _e( 'Enter Pushover Notifications for EDD Key', CKPN_TEXT_DOMAIN ); ?>" size="50" value="<?php echo $current_key; ?>" />
 			</td>
 		</tr>
 		<?php
@@ -741,80 +720,6 @@ class CKPushoverNotificationsEDD {
 			return false;
 
 		ckpn_display_application_key_dropdown( $setting_name );
-	}
-
-	/*************************
-	 * EDD Extension Methods *
-	 *************************/
-
-	/*
-	 *ckpn_edd_check_for_update
-	 *
-	 * Check the EDD Auto Updater API if we have a new version
-	 *
-	 * @return void
-	 */
-	public function ckpn_edd_check_for_update() {
-		$current_settings = get_option( 'ckpn_pushover_notifications_settings' );
-		if ( !get_option( '_edd_ckpn_license_key' ) && isset( $current_settings['edd_ckpn_license_key'] ) ) {
-			$edd_ext_key = $current_settings['edd_ckpn_license_key'];
-			update_option( '_edd_ckpn_license_key', $edd_ext_key );
-		} else {
-			$edd_ext_key = get_option( '_edd_ckpn_license_key' );
-		}
-
-		$edd_sl_license_key = isset( $edd_ext_key ) ? trim( $edd_ext_key ) : '';
-
-		// setup the updater
-		$edd_updater = new EDD_SL_Plugin_Updater( EDD_CKPN_SL_STORE_API_URL, __FILE__, array(
-				'version'  => CKPN_EDD_VERSION,    // current version number
-				'license'  => $edd_sl_license_key,   // license key ( used get_option above to retrieve from DB )
-				'item_name'  => EDD_CKPN_SL_PRODUCT_NAME,  // name of this plugin
-				'author'  => 'Chris Klosowski'    // author of this plugin
-			)
-		);
-	}
-
-	/*
-	 * ckpn_edd_activate_license
-	 *
-	 * Activate the extension with Easy Ditital Downloads Licenseing API
-	 */
-	public function ckpn_edd_activate_license() {
-		if ( !isset( $_REQUEST['page'] ) || ( isset( $_REQUEST['page'] ) && $_REQUEST['page'] !== 'pushover-notifications' ) )
-			return;
-
-		if ( !isset( $_REQUEST['tab'] ) || ( isset( $_REQUEST['tab'] ) && $_REQUEST['tab'] !== 'licenses' ) )
-			return;
-
-		if ( !isset( $_REQUEST['action'] ) || ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] !== 'update' ) )
-			return;
-
-		$current_options = $this->getOptions();
-		if ( isset( $current_options['ckpn_edd_active'] ) && $current_options['ckpn_edd_active'] == 'valid' )
-			return;
-
-		$license = sanitize_text_field( get_option( '_edd_ckpn_license_key' ) );
-
-		// data to send in our API request
-		$api_params = array(
-			'edd_action' => 'activate_license',
-			'license'  => $license,
-			'item_name'  => urlencode( EDD_CKPN_SL_PRODUCT_NAME ) // the name of our product in EDD
-		);
-
-		// Call the custom API.
-		$response = wp_remote_get( add_query_arg( $api_params, EDD_CKPN_SL_STORE_API_URL ) );
-
-		// make sure the response came back okay
-		if ( is_wp_error( $response ) )
-			return false;
-
-		// decode the license data
-		$license_data = json_decode( wp_remote_retrieve_body( $response ) );
-
-		$current_options['ckpn_edd_active'] = $license_data->license;
-		update_option( 'ckpn_pushover_notifications_settings', $current_options );
 	}
 }
 

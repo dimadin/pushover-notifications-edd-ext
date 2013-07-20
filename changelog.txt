@@ -1,6 +1,7 @@
 == Changelog ==
 = 1.2.7=
 * FIX: Compatibility with EDD 1.7 payment meta data functions.
+* UPDATE: Uses new License/Updater Classes for EDD Store.
 
 = 1.2.5=
 * NEW: Adding compatibility for Multiple Application Key option in Pushover Notifications for WordPress core plugin.
