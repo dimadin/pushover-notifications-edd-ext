@@ -453,7 +453,7 @@ class CKPushoverNotificationsEDD {
 					$message .= __( 'Discount: ', CKPN_TEXT_DOMAIN ) . $user_info['discount'] . "\n";
 				}
 
-				if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7' ) < 1 ) {
+				if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7', '<' ) ) {
 					$order_total = $payment['amount'];
 				} else {
 					$order_total = edd_get_payment_amount( $payment_id );
