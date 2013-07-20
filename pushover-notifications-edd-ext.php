@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.2.6
+Version: 1.2.7
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -473,7 +473,14 @@ class CKPushoverNotificationsEDD {
 				if ( isset( $user_info['discount'] ) && $user_info['discount'] !== 'none' ) {
 					$message .= __( 'Discount: ', CKPN_TEXT_DOMAIN ) . $user_info['discount'] . "\n";
 				}
-				$message .= sprintf( __( 'Total Sale: %s', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( $payment['amount'] ) ) );
+
+				if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7' ) < 1 ) {
+					$order_total = $payment['amount'];
+				} else {
+					$order_total = edd_get_payment_amount( $payment_id );
+				}
+
+				$message .= sprintf( __( 'Total Sale: %s', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( $order_total ) ) );
 
 				$args = array( 'title' => $title, 'message' => $message );
 
