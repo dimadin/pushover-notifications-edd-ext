@@ -40,7 +40,7 @@ class CKPushoverNotificationsEDD {
 
 			// Unify with the settings
 			add_filter( 'ckpn_options_defaults', array( $this, 'add_defaults' ), 1 );
-			register_deactivation_hook( 'pushover-notifications-edd-ext/pushover-notifications-edd-ext.php', array( $this, 'on_deactivate' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'on_deactivate' ) );
 			// Admin Hooks
 
 			add_action( 'admin_init', array( $this, 'admin_hooks' ) );
