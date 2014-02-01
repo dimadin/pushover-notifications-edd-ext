@@ -40,7 +40,7 @@ class CKPushoverNotificationsEDD {
 
 			// Unify with the settings
 			add_filter( 'ckpn_options_defaults', array( $this, 'add_defaults' ), 1 );
-			register_deactivation_hook( 'pushover-notifications-edd-ext/pushover-notifications-edd-ext.php', array( $this, 'on_deactivate' ) );
+			register_deactivation_hook( __FILE__, array( $this, 'on_deactivate' ) );
 			// Admin Hooks
 
 			add_action( 'admin_init', array( $this, 'admin_hooks' ) );
@@ -55,8 +55,8 @@ class CKPushoverNotificationsEDD {
 			add_action( 'init', array( $this, 'ckpn_edd_loaddomain' ) );
 
 			// EDD Hooks
-			add_action( 'edd_update_payment_status', array( $this, 'send_new_sale_notification' ), 10, 3 );
-			add_action( 'edd_update_payment_status', array( $this, 'send_discount_usage' ), 10, 4 );
+			add_action( 'edd_complete_purchase', array( $this, 'send_new_sale_notification' ) );
+			add_action( 'edd_complete_purchase', array( $this, 'send_discount_usage' ) );
 
 			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) )
 				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
@@ -430,53 +430,51 @@ class CKPushoverNotificationsEDD {
 	 * a pushover notificaiton is sent stating such.
 	 *
 	 * @param payment_id - int - the payment ID being altered
-	 * @param new_status - string - the new payment status
-	 * @param old_status - string - the old payment status
 	 *
 	 * @return void
 	 */
-	public function send_new_sale_notification( $payment_id, $new_status, $old_status ) {
+	public function send_new_sale_notification( $payment_id = 0 ) {
 		$options = ckpn_get_options();
 		
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) && $options['edd_complete_purchase'] ) {
-			if ( $new_status == 'complete' || $new_status == 'publish' ) {
-				$payment    = edd_get_payment_meta( $payment_id );
-				$cart_details = unserialize( $payment['cart_details'] );
-				$user_info   = unserialize( $payment['user_info'] );
 
-				$title = sprintf( __( '%s: New Sale!', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
-				$message = '';
-				foreach ( $cart_details as $item ) {
-					$message .= $item['name'] . ': ' . edd_currency_filter( edd_format_amount( $item['price'] ) ) . "\n";
-				}
-				if ( isset( $user_info['discount'] ) && $user_info['discount'] !== 'none' ) {
-					$message .= __( 'Discount: ', CKPN_TEXT_DOMAIN ) . $user_info['discount'] . "\n";
-				}
+			$payment      = edd_get_payment_meta( $payment_id );
+			$cart_details = edd_get_payment_meta_cart_details( $payment_id );
+			$user_info    = edd_get_payment_meta_user_info( $payment_id );
 
-				if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7', '<' ) ) {
-					$order_total = $payment['amount'];
-				} else {
-					$order_total = edd_get_payment_amount( $payment_id );
-				}
-
-				$message .= sprintf( __( 'Total Sale: %s', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( $order_total ) ) );
-
-				$args = array( 'title' => $title, 'message' => $message );
-
-				// Cha-ching!
-				if ( $options['new_sales_cashregister'] )
-					$args['sound'] = 'cashregister';
-
-				$notification_users = $this->get_users_to_alert();
-
-				if ( $options['multiple_keys'] )
-					$args['token'] = ckpn_get_application_key_by_setting( 'edd_complete_purchse' );
-
-				foreach ( $notification_users as $user ) {
-					$args['user'] = $user;
-					$this->send_notification( $args );
-				}
+			$title = sprintf( __( '%s: New Sale!', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
+			$message = '';
+			foreach ( $cart_details as $item ) {
+				$message .= $item['name'] . ': ' . edd_currency_filter( edd_format_amount( $item['price'] ) ) . "\n";
 			}
+			if ( isset( $user_info['discount'] ) && $user_info['discount'] !== 'none' ) {
+				$message .= __( 'Discount: ', CKPN_TEXT_DOMAIN ) . $user_info['discount'] . "\n";
+			}
+
+			if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7', '<' ) ) {
+				$order_total = $payment['amount'];
+			} else {
+				$order_total = edd_get_payment_amount( $payment_id );
+			}
+
+			$message .= sprintf( __( 'Total Sale: %s', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( $order_total ) ) );
+
+			$args = array( 'title' => $title, 'message' => $message );
+
+			// Cha-ching!
+			if ( $options['new_sales_cashregister'] )
+				$args['sound'] = 'cashregister';
+
+			$notification_users = $this->get_users_to_alert();
+
+			if ( $options['multiple_keys'] )
+				$args['token'] = ckpn_get_application_key_by_setting( 'edd_complete_purchse' );
+
+			foreach ( $notification_users as $user ) {
+				$args['user'] = $user;
+				$this->send_notification( $args );
+			}
+
 		}
 	}
 
@@ -527,82 +525,78 @@ class CKPushoverNotificationsEDD {
 	 * a pushover notificaiton is sent stating such.
 	 *
 	 * @param payment_id - int - the payment ID being altered
-	 * @param new_status - string - the new payment status
-	 * @param old_status - string - the old payment status
 	 *
 	 * @return void
 	 */
-	public function send_discount_usage( $payment_id, $new_status, $old_status ) {
+	public function send_discount_usage( $payment_id = 0 ) {
 		$options = ckpn_get_options();
 
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) && $options['edd_discount_notices'] ) {
-			if ( $new_status == 'complete' || $new_status == 'publish' ) {
 
-				$payment    	= edd_get_payment_meta( $payment_id );
-				$cart_details   = unserialize( $payment['cart_details'] );
-				$user_info    	= unserialize( $payment['user_info'] );
+			$payment      = edd_get_payment_meta( $payment_id );
+			$cart_details = edd_get_payment_meta_cart_details( $payment_id );
+			$user_info    = edd_get_payment_meta_user_info( $payment_id );
 
-				if ( !isset( $user_info['discount'] ) || $user_info['discount'] == 'none' )
-					return;
+			if ( !isset( $user_info['discount'] ) || $user_info['discount'] == 'none' )
+				return;
 
-				$discount_id = edd_get_discount_id_by_code( $user_info['discount'] );
+			$discount_id = edd_get_discount_id_by_code( $user_info['discount'] );
 
-				$send_discount_notification = get_post_meta( $discount_id, '_ckpn_edd_discount_notify', true );
-				if ( $send_discount_notification == 'off' )
-					return false;
+			$send_discount_notification = get_post_meta( $discount_id, '_ckpn_edd_discount_notify', true );
+			if ( $send_discount_notification == 'off' )
+				return false;
 
-				$max_uses = edd_get_discount_max_uses( $discount_id );
+			$max_uses = edd_get_discount_max_uses( $discount_id );
 
-				if ( $max_uses == 0 )
-					return;
+			if ( $max_uses == 0 )
+				return;
 
-				$selected_pct = NULL;
+			$selected_pct = NULL;
 
-				// Find the current usage
-				$current_uses 	= edd_get_discount_uses( $discount_id );
-				$current_pct 	= ( $current_uses / $max_uses ) * 100;
+			// Find the current usage
+			$current_uses 	= edd_get_discount_uses( $discount_id );
+			$current_pct 	= ( $current_uses / $max_uses ) * 100;
 
-				// What will our new usage count be
-				$new_uses = $current_uses + 1;
-				$new_pct = ( $new_uses / $max_uses ) * 100;
+			// What will our new usage count be
+			$new_uses = $current_uses + 1;
+			$new_pct = ( $new_uses / $max_uses ) * 100;
 
-				// If we're at the limit let us know
-				if ( $new_uses == $max_uses ) {
-					$selected_pct = '100';
+			// If we're at the limit let us know
+			if ( $new_uses == $max_uses ) {
+				$selected_pct = '100';
 
-					$title = sprintf( __( '%s: Discount Code Depleated', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
-					$message = sprintf( __( 'The discount code %s has reached it\'s maximum usage.', CKPN_TEXT_DOMAIN ), $user_info['discount'] );
+				$title = sprintf( __( '%s: Discount Code Depleated', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
+				$message = sprintf( __( 'The discount code %s has reached it\'s maximum usage.', CKPN_TEXT_DOMAIN ), $user_info['discount'] );
 
-				} else { // We're not 100% used, see if we crossed a threshold
+			} else { // We're not 100% used, see if we crossed a threshold
 
-					if ( $current_pct < 25 && $new_pct >= 25 ) {
-						$selected_pct = '25';
-					} elseif ( $current_pct < 50 && $new_pct >= 50 ) {
-						$selected_pct = '50';
-					} elseif ( $current_pct < 75 && $new_pct >= 75 ) {
-						$selected_pct = '75';
-					}
-
-					if ( !is_null( $selected_pct ) ) {
-						$title = sprintf( __( '%s: Discount Code %s', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ), $user_info['discount'] );
-						$message = sprintf( __( '%s of codes have been redeemed. %d codes remain.', CKPN_TEXT_DOMAIN ), $selected_pct . '%', ( $max_uses - $new_uses ) );
-					}
+				if ( $current_pct < 25 && $new_pct >= 25 ) {
+					$selected_pct = '25';
+				} elseif ( $current_pct < 50 && $new_pct >= 50 ) {
+					$selected_pct = '50';
+				} elseif ( $current_pct < 75 && $new_pct >= 75 ) {
+					$selected_pct = '75';
 				}
 
-				$option_key = 'edd_discount_usage_' . $selected_pct;
+				if ( !is_null( $selected_pct ) ) {
+					$title = sprintf( __( '%s: Discount Code %s', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ), $user_info['discount'] );
+					$message = sprintf( __( '%s of codes have been redeemed. %d codes remain.', CKPN_TEXT_DOMAIN ), $selected_pct . '%', ( $max_uses - $new_uses ) );
+				}
+			}
 
-				if ( $selected_pct != NULL && $options[$option_key] ) {
-					$args = array( 'title' => $title, 'message' => $message );
+			$option_key = 'edd_discount_usage_' . $selected_pct;
 
-					$notification_users = $this->get_users_to_alert();
+			if ( $selected_pct != NULL && $options[$option_key] ) {
+				$args = array( 'title' => $title, 'message' => $message );
 
-					if ( $options['multiple_keys'] )
-						$args['token'] = ckpn_get_application_key_by_setting( 'edd_discount_notices' );
+				$notification_users = $this->get_users_to_alert();
 
-					foreach ( $notification_users as $user ) {
-						$args['user'] = $user;
-						$this->send_notification( $args );
-					}
+				if ( $options['multiple_keys'] )
+					$args['token'] = ckpn_get_application_key_by_setting( 'edd_discount_notices' );
+
+				foreach ( $notification_users as $user ) {
+					$args['user'] = $user;
+					$this->send_notification( $args );
 				}
 			}
 		}
