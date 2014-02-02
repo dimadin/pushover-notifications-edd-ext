@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.2.7
+Version: 1.2.8
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -14,7 +14,7 @@ define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.2.7' );
+define( 'CKPN_EDD_VERSION', '1.2.8' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
@@ -76,7 +76,7 @@ class CKPushoverNotificationsEDD {
 		$plugin_folder = get_plugins( '/pushover-notifications' );
 		$plugin_file = 'pushover-notifications.php';
 		$core_version = $plugin_folder[$plugin_file]['Version'];
-		$requires = '1.7.3.1';
+		$requires = '1.9.3';
 
 		if ( version_compare( $core_version, $requires ) >= 0 ) {
 			return true;
@@ -687,7 +687,7 @@ class CKPushoverNotificationsEDD {
 	 * @return array Users who should receive alerts
 	 */
 	public function get_users_to_alert() {
-		$users = get_users( array( 'fields' => 'ID' ) );
+		$users = ckpn_get_users_with_keys();
 
 		$options = ckpn_get_options();
 
@@ -697,13 +697,11 @@ class CKPushoverNotificationsEDD {
 		$alert_capability = apply_filters( 'ckpn_sales_alert_capability', 'view_shop_reports' );
 
 		// Find the users who can view_shop_reports and have a user key
-		foreach ( $users as $user ) {
-			if ( !user_can( $user, $alert_capability ) )
+		foreach ( $users as $user_id => $user_key ) {
+			if ( !user_can( $user_id, $alert_capability ) )
 				continue;
 
-			$user_key = get_user_meta( $user, 'ckpn_user_key', true );
-			if ( $user_key )
-				$user_keys[] = $user_key;
+			$user_keys[] = $user_key;
 		}
 
 		return array_unique( apply_filters( 'ckpn_users_to_alert_keys', $user_keys ) );
