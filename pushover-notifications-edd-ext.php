@@ -58,12 +58,12 @@ class CKPushoverNotificationsEDD {
 			add_action( 'edd_complete_purchase', array( $this, 'send_new_sale_notification' ) );
 			add_action( 'edd_complete_purchase', array( $this, 'send_discount_usage' ) );
 
-			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) ){
+			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) ) {
 				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
-				if ( class_exists( 'EDD_Front_End_Submissions' ) ){
+				if ( class_exists( 'EDD_Front_End_Submissions' ) ) {
 					include_once( CKPN_EDD_FOLDER . 'includes/pushover_field.php' );
 					add_filter(  'fes_load_fields_array', array( $this, 'ckpn_add_fes_field' ) );
-					function ckpn_add_fes_field( $fields ){
+					function ckpn_add_fes_field( $fields ) {
 						$fields[ 'custom_pushover' ] = 'FES_Pushover_Field';
 						return $fields;
 					}

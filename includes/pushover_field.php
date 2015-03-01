@@ -101,10 +101,10 @@ class FES_Pushover_Field extends FES_Field {
         <?php
 		return ob_get_clean();
 	}
-
-	/** Validates field */
-	public function validate(  $save_id = -2, $values = array(), $user_id = -2 ) {
-		// todo: for text fields, let's validate required entry, min/max length
-		return true; // we'll return an error object in the future when we implement validation
+}
+add_action( 'fes_save_field_after_save', 'ckpn_save_fes_field', 10, 3 );
+function ckpn_save_fes_field( $save_id, $value, $user_id ){
+	if ( $this->characteristics[ 'name' ] == 'custom_pushover' ){
+		ckpn_update_user_to_keys_list( $user_id, $value[ 'custom_pushover' ] );
 	}
 }
