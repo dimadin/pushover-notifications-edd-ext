@@ -60,12 +60,15 @@ class CKPushoverNotificationsEDD {
 
 			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) ){
 				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
-				if ( class_exists( 'EDD_Front_End_Submissions' ) ){
-					include_once( CKPN_EDD_FOLDER . 'includes/pushover_field.php' );
-					add_filter(  'fes_load_fields_array', array( $this, 'ckpn_add_fes_field' ) );
-					function ckpn_add_fes_field( $fields ){
-						$fields[ 'custom_pushover' ] = 'FES_Pushover_Field';
-						return $fields;
+				add_action( 'fes_load_fields_require', 'ckpn_add_fes_functionality' );
+				function ckpn_add_fes_functionality(){
+					if ( class_exists( 'EDD_Front_End_Submissions' ) ){
+						include_once( CKPN_EDD_FOLDER . 'includes/pushover_field.php' );
+						add_filter(  'fes_load_fields_array', array( $this, 'ckpn_add_fes_field' ) );
+						function ckpn_add_fes_field( $fields ){
+							$fields[ 'custom_pushover' ] = 'FES_Pushover_Field';
+							return $fields;
+						}
 					}
 				}
 			}
