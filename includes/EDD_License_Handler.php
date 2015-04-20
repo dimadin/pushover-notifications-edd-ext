@@ -145,7 +145,7 @@ if ( !class_exists( 'EDD_License' ) ) {
 			);
 
 			// Call the API
-			$response = wp_remote_get( add_query_arg( $api_params, 'https://easydigitaldownloads.com' ), array( 'timeout' => 15, 'body' => $api_params, 'sslverify' => false ) );
+			$response = wp_remote_get( esc_url_raw( add_query_arg( $api_params, 'https://easydigitaldownloads.com' ), array( 'timeout' => 15, 'body' => $api_params, 'sslverify' => false ) ) );
 
 			// Make sure there are no errors
 			if ( is_wp_error( $response ) ) return false;
@@ -182,7 +182,7 @@ if ( !class_exists( 'EDD_License' ) ) {
 				);
 
 				// Call the API
-				$response = wp_remote_get( add_query_arg( $api_params, 'https://easydigitaldownloads.com' ), array( 'timeout' => 15, 'sslverify' => false ) );
+				$response = wp_remote_get( esc_url_raw( add_query_arg( $api_params, 'https://easydigitaldownloads.com' ), array( 'timeout' => 15, 'sslverify' => false ) ) );
 
 				// Make sure there are no errors
 				if ( is_wp_error( $response ) ) return false;

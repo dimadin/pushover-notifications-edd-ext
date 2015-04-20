@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.2.8
+Version: 1.2.9
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -14,7 +14,7 @@ define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.2.8' );
+define( 'CKPN_EDD_VERSION', '1.2.9' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
@@ -143,7 +143,7 @@ class CKPushoverNotificationsEDD {
 	 */
 	function missing_core_nag() {
 		add_settings_error( 'ckpn-edd-notices', 'missing-ckpn', sprintf( __( 'To use Pushover Notifications for Easy Digital Downloads you need to also install and activate the free plugin <a href="%s">Pushover Notifications for WordPress</a>.', CKPN_TEXT_DOMAIN ), admin_url( 'plugin-install.php?tab=search&type=term&s=Pushover+Notifications+for+WordPress&plugin-search-input=Search+Plugins' ) ) );
-		
+
 		settings_errors( 'ckpn-edd-notices' );
 	}
 
@@ -157,7 +157,7 @@ class CKPushoverNotificationsEDD {
 	 */
 	function core_out_of_date_nag() {
 		add_settings_error( 'ckpn-notices', 'out-of-date-ckpn', sprintf( __( 'Your Pushover Notifications core plugin is out of date. Please <a href="%s">update</a> it in order to use Pushover Notifications for Easy Digital Downloads.', CKPN_TEXT_DOMAIN ), admin_url( 'update-core.php' ) ) );
-		
+
 		settings_errors( 'ckpn-notices' );
 	}
 
@@ -435,7 +435,7 @@ class CKPushoverNotificationsEDD {
 	 */
 	public function send_new_sale_notification( $payment_id = 0 ) {
 		$options = ckpn_get_options();
-		
+
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) && $options['edd_complete_purchase'] ) {
 
 			$payment      = edd_get_payment_meta( $payment_id );

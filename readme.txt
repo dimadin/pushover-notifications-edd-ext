@@ -3,7 +3,7 @@ Contributors: cklosows
 Tags: Easy Digital Downloads, Pushover
 Requires at least: 3.0
 Tested up to: 3.8.1
-Stable tag: 1.2.8
+Stable tag: 1.2.9
 Donate link: https://wp-push.com
 License: GPLv2 or later
 
@@ -18,6 +18,9 @@ This extension also includes options to alert you when discount codes are nearin
 Pushover is a third-party service that can send notifications to your iOS and Android devices. This add-on integrates with the Pushover service to send you notifications any time a new sale is made through Easy Digital Downloads. It will tell you the item(s) that was sold and the amount of the purchase. It can also send daily alerts with a breakdown of sales and earnings for the day.
 
 == Changelog ==
+= 1.2.9 =
+* FIX: XSS vulnerability in query args
+
 = 1.2.8 =
 * NEW/FIX: Making the call to get users more efficient
 
