@@ -1,4 +1,8 @@
 == Changelog ==
+= 1.3 =
+* NEW: Intregation with Software Licensing Extension to identify items when renewed
+* TWEAK: Improved translation integrations
+
 = 1.2.7=
 * FIX: Compatibility with EDD 1.7 payment meta data functions.
 * UPDATE: Uses new License/Updater Classes for EDD Store.
