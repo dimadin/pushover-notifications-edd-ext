@@ -12,7 +12,6 @@ Text Domain: ckpn_edd
 // Define the plugin path
 define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
-define( 'CKPN_TEXT_DOMAIN' , 'ckpn-edd' );
 // plugin version
 define( 'CKPN_EDD_VERSION', '1.2.9' );
 
@@ -24,7 +23,7 @@ define( 'EDD_CKPN_SL_PRODUCT_NAME', 'Pushover Notifications for Easy Digital Dow
 
 // Load the EDD license handler only if not already loaded. Must be placed in the main plugin file
 if( ! class_exists( 'EDD_License' ) )
-    include( dirname( __FILE__ ) . '/includes/EDD_License_Handler.php' );
+	include( dirname( __FILE__ ) . '/includes/EDD_License_Handler.php' );
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -100,7 +99,7 @@ class CKPushoverNotificationsEDD {
 	}
 
 	public function ckpn_edd_loaddomain() {
-		load_plugin_textdomain( CKPN_TEXT_DOMAIN, false, '/pushover-notifications-edd-ext/languages/' );
+		load_plugin_textdomain( 'ckpn-edd', false, '/pushover-notifications-edd-ext/languages/' );
 	}
 
 	public function load_cusom_js( $hook ) {
@@ -142,7 +141,7 @@ class CKPushoverNotificationsEDD {
 	 * @return void
 	 */
 	function missing_core_nag() {
-		add_settings_error( 'ckpn-edd-notices', 'missing-ckpn', sprintf( __( 'To use Pushover Notifications for Easy Digital Downloads you need to also install and activate the free plugin <a href="%s">Pushover Notifications for WordPress</a>.', CKPN_TEXT_DOMAIN ), admin_url( 'plugin-install.php?tab=search&type=term&s=Pushover+Notifications+for+WordPress&plugin-search-input=Search+Plugins' ) ) );
+		add_settings_error( 'ckpn-edd-notices', 'missing-ckpn', sprintf( __( 'To use Pushover Notifications for Easy Digital Downloads you need to also install and activate the free plugin <a href="%s">Pushover Notifications for WordPress</a>.', 'ckpn-edd' ), admin_url( 'plugin-install.php?tab=search&type=term&s=Pushover+Notifications+for+WordPress&plugin-search-input=Search+Plugins' ) ) );
 
 		settings_errors( 'ckpn-edd-notices' );
 	}
@@ -156,7 +155,7 @@ class CKPushoverNotificationsEDD {
 	 * @return void
 	 */
 	function core_out_of_date_nag() {
-		add_settings_error( 'ckpn-notices', 'out-of-date-ckpn', sprintf( __( 'Your Pushover Notifications core plugin is out of date. Please <a href="%s">update</a> it in order to use Pushover Notifications for Easy Digital Downloads.', CKPN_TEXT_DOMAIN ), admin_url( 'update-core.php' ) ) );
+		add_settings_error( 'ckpn-notices', 'out-of-date-ckpn', sprintf( __( 'Your Pushover Notifications core plugin is out of date. Please <a href="%s">update</a> it in order to use Pushover Notifications for Easy Digital Downloads.', 'ckpn-edd' ), admin_url( 'update-core.php' ) ) );
 
 		settings_errors( 'ckpn-notices' );
 	}
@@ -243,11 +242,11 @@ class CKPushoverNotificationsEDD {
 		$current = $this->getOptions();
 		?>
 		<tr valign="top">
-			<th scope="row"><?php _e( 'Easy Digital Downloads Settings', CKPN_TEXT_DOMAIN ); ?></th>
+			<th scope="row"><?php _e( 'Easy Digital Downloads Settings', 'ckpn-edd' ); ?></th>
 			<td>
-				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php checked( $current['edd_complete_purchase'], '1', true ); ?> /> <?php _e( 'New Sales', CKPN_TEXT_DOMAIN ); ?> <?php $this->additional_key_dropdown( 'edd_complete_purchse' ); ?><br />
-				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php checked( $current['new_sales_cashregister'], '1', true ); ?> /> <?php _e( 'Use Cash Register Sound?', CKPN_TEXT_DOMAIN ); ?><br />
-				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php checked( $current['edd_daily_sales'], '1', true ); ?> /> <span><?php _e( 'Daily Sales Report', CKPN_TEXT_DOMAIN ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<?php $this->additional_key_dropdown( 'edd_daily_sales' ); ?><br />
+				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php checked( $current['edd_complete_purchase'], '1', true ); ?> /> <?php _e( 'New Sales', 'ckpn-edd' ); ?> <?php $this->additional_key_dropdown( 'edd_complete_purchse' ); ?><br />
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php checked( $current['new_sales_cashregister'], '1', true ); ?> /> <?php _e( 'Use Cash Register Sound?', 'ckpn-edd' ); ?><br />
+				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php checked( $current['edd_daily_sales'], '1', true ); ?> /> <span><?php _e( 'Daily Sales Report', 'ckpn-edd' ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<?php $this->additional_key_dropdown( 'edd_daily_sales' ); ?><br />
 				<input type="checkbox" id="edd_discount_notices" name="ckpn_pushover_notifications_settings[edd_discount_notices]" value="1" <?php checked( $current['edd_discount_notices'], '1', true ); ?> /> Enable Discount Notifications <?php $this->additional_key_dropdown( 'edd_discount_notices' ); ?>
 				<div id="discount-code-settings" <?php if ( !$current['edd_discount_notices'] ) { ?>style="display: none"<?php } ?>>
 					<strong>Notify me when a discount code usage percentage reaches:</strong><br />
@@ -256,9 +255,9 @@ class CKPushoverNotificationsEDD {
 					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_75]" value="1" <?php checked( $current['edd_discount_usage_75'], '1', true ); ?> /> 75%&nbsp;&nbsp;
 					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_usage_100]" value="1" <?php checked( $current['edd_discount_usage_100'], '1', true ); ?> /> 100%<br />
 					<strong>Notify me when a discount code has X Days left:</strong> <sup>&dagger;</sup><br />
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_14]" value="1" <?php checked( $current['edd_discount_days_14'], '1', true ); ?> /> <?php _e( '14 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_7]" value="1" <?php checked( $current['edd_discount_days_7'], '1', true ); ?> /> <?php _e( '7 Days', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
-					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_1]" value="1" <?php checked( $current['edd_discount_days_1'], '1', true ); ?> /> <?php _e( '1 Day', CKPN_TEXT_DOMAIN ); ?>&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_14]" value="1" <?php checked( $current['edd_discount_days_14'], '1', true ); ?> /> <?php _e( '14 Days', 'ckpn-edd' ); ?>&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_7]" value="1" <?php checked( $current['edd_discount_days_7'], '1', true ); ?> /> <?php _e( '7 Days', 'ckpn-edd' ); ?>&nbsp;&nbsp;
+					<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_discount_days_1]" value="1" <?php checked( $current['edd_discount_days_1'], '1', true ); ?> /> <?php _e( '1 Day', 'ckpn-edd' ); ?>&nbsp;&nbsp;
 				</div>
 			</td>
 		</tr>
@@ -316,8 +315,8 @@ class CKPushoverNotificationsEDD {
 			$sales_count = count( $sales );
 		}
 
-		$title = sprintf( __( '%s: Earnings Report %s', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ), date_i18n( get_option( 'date_format' ), strtotime( $month . '/' . $day ) ) );
-		$message = sprintf( __( 'Earnings: %s %sSales: %d', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( edd_get_earnings_by_date( $day, $month, $year ) ) ), "\n", $sales_count );
+		$title = sprintf( __( '%s: Earnings Report %s', 'ckpn-edd' ), get_bloginfo( 'name' ), date_i18n( get_option( 'date_format' ), strtotime( $month . '/' . $day ) ) );
+		$message = sprintf( __( 'Earnings: %s %sSales: %d', 'ckpn-edd' ), edd_currency_filter( edd_format_amount( edd_get_earnings_by_date( $day, $month, $year ) ) ), "\n", $sales_count );
 
 		$args = array( 'title' => $title, 'message' => $message );
 
@@ -393,20 +392,20 @@ class CKPushoverNotificationsEDD {
 		if ( $total_found == 0 )
 			return;
 
-		$title = sprintf( __( '%s: Discount Codes', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
+		$title = sprintf( __( '%s: Discount Codes', 'ckpn-edd' ), get_bloginfo( 'name' ) );
 
 		if ( $total_found == 1 ) {
 			asort( $found_discounts );
 			$found_discounts = array_reverse( $found_discounts, true );
 
 			$days = array_shift( array_keys( $found_discounts ) );
-			$days_string = sprintf( _n( 'tomorrow', 'in %d days', $days, CKPN_TEXT_DOMAIN ), $days );
-			$message = sprintf( __( 'You have a discount code expiring %s', CKPN_TEXT_DOMAIN ), $days_string );
+			$days_string = sprintf( _n( 'tomorrow', 'in %d days', $days, 'ckpn-edd' ), $days );
+			$message = sprintf( __( 'You have a discount code expiring %s', 'ckpn-edd' ), $days_string );
 		} elseif ( $total_found > 1 ) {
-			$message = sprintf( __( 'You have %d codes expiring soon', CKPN_TEXT_DOMAIN ), array_sum( $found_discounts ) );
+			$message = sprintf( __( 'You have %d codes expiring soon', 'ckpn-edd' ), array_sum( $found_discounts ) );
 			if ( $found_discounts['1'] > 0 ) {
-				$expire = _n( 'expires', 'expire', $found_discounts['1'], CKPN_TEXT_DOMAIN );
-				$message .= sprintf( __( ', %d of which %s tomorrow', CKPN_TEXT_DOMAIN ), $found_discounts['1'], $expire );
+				$expire = _n( 'expires', 'expire', $found_discounts['1'], 'ckpn-edd' );
+				$message .= sprintf( __( ', %d of which %s tomorrow', 'ckpn-edd' ), $found_discounts['1'], $expire );
 			}
 		}
 
@@ -442,13 +441,18 @@ class CKPushoverNotificationsEDD {
 			$cart_details = edd_get_payment_meta_cart_details( $payment_id );
 			$user_info    = edd_get_payment_meta_user_info( $payment_id );
 
-			$title = sprintf( __( '%s: New Sale!', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
+			$title = sprintf( __( '%s: New Sale!', 'ckpn-edd' ), get_bloginfo( 'name' ) );
 			$message = '';
 			foreach ( $cart_details as $item ) {
-				$message .= $item['name'] . ': ' . edd_currency_filter( edd_format_amount( $item['price'] ) ) . "\n";
+				$message .= $item['name'] . ': ';
+				$message .= edd_currency_filter( edd_format_amount( $item['price'] ) );
+				if ( ! empty( $item['item_number']['options']['is_renewal'] ) ) {
+					$message .= ' ↺';
+				}
+				$message .= "\n";
 			}
 			if ( isset( $user_info['discount'] ) && $user_info['discount'] !== 'none' ) {
-				$message .= __( 'Discount: ', CKPN_TEXT_DOMAIN ) . $user_info['discount'] . "\n";
+				$message .= __( 'Discount: ', 'ckpn-edd' ) . $user_info['discount'] . "\n";
 			}
 
 			if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7', '<' ) ) {
@@ -457,9 +461,9 @@ class CKPushoverNotificationsEDD {
 				$order_total = edd_get_payment_amount( $payment_id );
 			}
 
-			$message .= sprintf( __( 'Total Sale: %s', CKPN_TEXT_DOMAIN ), edd_currency_filter( edd_format_amount( $order_total ) ) );
+			$message .= sprintf( __( 'Total Sale: %s', 'ckpn-edd' ), edd_currency_filter( edd_format_amount( $order_total ) ) );
 
-			$args = array( 'title' => $title, 'message' => $message );
+			$args = array( 'title' => $title, 'message' => $message, 'html' => 1 );
 
 			// Cha-ching!
 			if ( $options['new_sales_cashregister'] )
@@ -500,12 +504,12 @@ class CKPushoverNotificationsEDD {
 		if ( ! $user_key )
 			return;
 
-		$title = sprintf( __( 'You have made a new sale on %s!', CKPN_TEXT_DOMAIN ), stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) );
+		$title = sprintf( __( 'You have made a new sale on %s!', 'ckpn-edd' ), stripslashes_deep( html_entity_decode( $from_name, ENT_COMPAT, 'UTF-8' ) ) );
 		$title = apply_filters( 'ckpn_edd_commissions_title', $title );
 
-		$message  = __( 'Item sold: ', CKPN_TEXT_DOMAIN ) . get_the_title( $download_id ) . "\n";
-		$message .= __( 'Amount: ', CKPN_TEXT_DOMAIN ) . " " . html_entity_decode( edd_currency_filter( edd_format_amount( $commission_amount ) ) ) . "\n";
-		$message .= __( 'Commission Rate: ', CKPN_TEXT_DOMAIN ) . $rate . "%\n";
+		$message  = __( 'Item sold: ', 'ckpn-edd' ) . get_the_title( $download_id ) . "\n";
+		$message .= __( 'Amount: ', 'ckpn-edd' ) . " " . html_entity_decode( edd_currency_filter( edd_format_amount( $commission_amount ) ) ) . "\n";
+		$message .= __( 'Commission Rate: ', 'ckpn-edd' ) . $rate . "%\n";
 
 		$message = apply_filters( 'ckpn_edd_commissions_message', $message, $download_id, $user_id, $commission_amount, $rate );
 
@@ -565,8 +569,8 @@ class CKPushoverNotificationsEDD {
 			if ( $new_uses == $max_uses ) {
 				$selected_pct = '100';
 
-				$title = sprintf( __( '%s: Discount Code Depleated', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ) );
-				$message = sprintf( __( 'The discount code %s has reached it\'s maximum usage.', CKPN_TEXT_DOMAIN ), $user_info['discount'] );
+				$title = sprintf( __( '%s: Discount Code Depleated', 'ckpn-edd' ), get_bloginfo( 'name' ) );
+				$message = sprintf( __( 'The discount code %s has reached it\'s maximum usage.', 'ckpn-edd' ), $user_info['discount'] );
 
 			} else { // We're not 100% used, see if we crossed a threshold
 
@@ -579,8 +583,8 @@ class CKPushoverNotificationsEDD {
 				}
 
 				if ( !is_null( $selected_pct ) ) {
-					$title = sprintf( __( '%s: Discount Code %s', CKPN_TEXT_DOMAIN ), get_bloginfo( 'name' ), $user_info['discount'] );
-					$message = sprintf( __( '%s of codes have been redeemed. %d codes remain.', CKPN_TEXT_DOMAIN ), $selected_pct . '%', ( $max_uses - $new_uses ) );
+					$title = sprintf( __( '%s: Discount Code %s', 'ckpn-edd' ), get_bloginfo( 'name' ), $user_info['discount'] );
+					$message = sprintf( __( '%s of codes have been redeemed. %d codes remain.', 'ckpn-edd' ), $selected_pct . '%', ( $max_uses - $new_uses ) );
 				}
 			}
 
@@ -619,14 +623,14 @@ class CKPushoverNotificationsEDD {
 		<table class="form-table">
 			<tr class="form-field">
 				<th scope="row" valign="top">
-					<label for="ckpn-edd-discount-notifications"><?php _e( 'Usage Notifications', CKPN_TEXT_DOMAIN ); ?></label>
+					<label for="ckpn-edd-discount-notifications"><?php _e( 'Usage Notifications', 'ckpn-edd' ); ?></label>
 				</th>
 				<td>
 					<select name="discount-notifications" id="ckpn-edd-discount-notifications">
-						<option value="on" <?php selected( $current_status, 'on' ); ?>><?php _e( 'On', CKPN_TEXT_DOMAIN ); ?></option>
-						<option value="off" <?php selected( $current_status, 'off' ); ?>><?php _e( 'Off', CKPN_TEXT_DOMAIN ); ?></option>
+						<option value="on" <?php selected( $current_status, 'on' ); ?>><?php _e( 'On', 'ckpn-edd' ); ?></option>
+						<option value="off" <?php selected( $current_status, 'off' ); ?>><?php _e( 'Off', 'ckpn-edd' ); ?></option>
 					</select>
-					<p class="description"><?php _e( 'Be notified of this discount code\'s usage &amp; expiration', CKPN_TEXT_DOMAIN ); ?></p>
+					<p class="description"><?php _e( 'Be notified of this discount code\'s usage &amp; expiration', 'ckpn-edd' ); ?></p>
 				</td>
 			</tr>
 		</table>
@@ -648,14 +652,14 @@ class CKPushoverNotificationsEDD {
 		<table class="form-table">
 			<tr class="form-field">
 				<th scope="row" valign="top">
-					<label for="ckpn-edd-discount-notifications"><?php _e( 'Usage Notifications', CKPN_TEXT_DOMAIN ); ?></label>
+					<label for="ckpn-edd-discount-notifications"><?php _e( 'Usage Notifications', 'ckpn-edd' ); ?></label>
 				</th>
 				<td>
 					<select name="discount-notifications" id="ckpn-edd-discount-notifications">
-						<option value="on"><?php _e( 'On', CKPN_TEXT_DOMAIN ); ?></option>
-						<option value="off"><?php _e( 'Off', CKPN_TEXT_DOMAIN ); ?></option>
+						<option value="on"><?php _e( 'On', 'ckpn-edd' ); ?></option>
+						<option value="off"><?php _e( 'Off', 'ckpn-edd' ); ?></option>
 					</select>
-					<p class="description"><?php _e( 'Be notified of this discount code\'s usage &amp; expiration', CKPN_TEXT_DOMAIN ); ?></p>
+					<p class="description"><?php _e( 'Be notified of this discount code\'s usage &amp; expiration', 'ckpn-edd' ); ?></p>
 				</td>
 			</tr>
 		</table>
