@@ -20,10 +20,12 @@ define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
 define( 'CKPN_EDD_URL', plugins_url( 'pushover-notifications-edd-ext', 'pushover-notifications-edd-ext.php' ) );
 
 define( 'EDD_CKPN_SL_PRODUCT_NAME', 'Pushover Notifications for Easy Digital Downloads' );
+define( 'EDD_CKPN_STORE_URL', 'https://easydigitaldownloads.com' );
 
-// Load the EDD license handler only if not already loaded. Must be placed in the main plugin file
-if( ! class_exists( 'EDD_License' ) )
-	include( dirname( __FILE__ ) . '/includes/EDD_License_Handler.php' );
+if( !class_exists( 'EDD_SL_Plugin_Updater' ) ) {
+	// load our custom updater
+	include( dirname( __FILE__ ) . '/includes/EDD_SL_Plugin_Updater.php' );
+}
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -34,8 +36,6 @@ class CKPushoverNotificationsEDD {
 		if ( !$this->checkCoreVersion() ) {
 			add_action( 'admin_notices', array( $this, 'core_out_of_date_nag' ) );
 		} else {
-			// Instantiate the licensing / updater. Must be placed in the main plugin file
-			$license = new EDD_License( __FILE__, EDD_CKPN_SL_PRODUCT_NAME, CKPN_EDD_VERSION, 'Chris Klosowski' );
 
 			// Unify with the settings
 			add_filter( 'ckpn_options_defaults', array( $this, 'add_defaults' ), 1 );
@@ -57,8 +57,12 @@ class CKPushoverNotificationsEDD {
 			add_action( 'edd_complete_purchase', array( $this, 'send_new_sale_notification' ) );
 			add_action( 'edd_complete_purchase', array( $this, 'send_discount_usage' ) );
 
-			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) )
+			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) ) {
 				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
+			}
+
+			add_action( 'admin_init', array( $this, 'plugin_updater' ) );
+
 		}
 	}
 
@@ -69,6 +73,25 @@ class CKPushoverNotificationsEDD {
 
 		return self::$ckpn_edd_instance;
 	}
+
+	/**
+	 * Software Licensing Functions
+	 */
+	public function plugin_updater() {
+		$options = $this->getOptions();
+		// retrieve our license key from the DB
+		$license_key = trim( $options['edd_ckpn_license_key'] );
+
+		// setup the updater
+		$edd_updater = new EDD_SL_Plugin_Updater( EDD_CKPN_STORE_URL, __FILE__, array(
+				'version' 	=> CKPN_EDD_VERSION,
+				'license' 	=> $license_key,
+				'item_name' => EDD_CKPN_SL_PRODUCT_NAME,
+				'author' 	=> 'Chris Klosowski',
+			)
+		);
+	}
+
 
 	private function checkCoreVersion() {
 		// Make sure we have the required version of Pushover Notifications core plugin
@@ -215,18 +238,19 @@ class CKPushoverNotificationsEDD {
 	 */
 	public function add_defaults( $defaults ) {
 		$ckpn_edd_defaults = array(
-			'edd_ckpn_license_key'  => false,
+			'edd_ckpn_license_key'   => false,
 			'edd_complete_purchase'  => false,
 			'new_sales_cashregister' => false,
-			'edd_daily_sales'   => false,
-			'edd_discount_notices'  => false,
+			'notify_on_free'         => false,
+			'edd_daily_sales'        => false,
+			'edd_discount_notices'   => false,
 			'edd_discount_usage_25'  => false,
 			'edd_discount_usage_50'  => false,
 			'edd_discount_usage_75'  => false,
 			'edd_discount_usage_100' => false,
-			'edd_discount_days_14'  => false,
-			'edd_discount_days_7'  => false,
-			'edd_discount_days_1'  => false
+			'edd_discount_days_14'   => false,
+			'edd_discount_days_7'    => false,
+			'edd_discount_days_1'    => false
 		);
 
 		return array_merge( $defaults, $ckpn_edd_defaults );
@@ -246,6 +270,7 @@ class CKPushoverNotificationsEDD {
 			<td>
 				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_complete_purchase]" value="1" <?php checked( $current['edd_complete_purchase'], '1', true ); ?> /> <?php _e( 'New Sales', 'ckpn-edd' ); ?> <?php $this->additional_key_dropdown( 'edd_complete_purchse' ); ?><br />
 				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[new_sales_cashregister]" value="1" <?php checked( $current['new_sales_cashregister'], '1', true ); ?> /> <?php _e( 'Use Cash Register Sound?', 'ckpn-edd' ); ?><br />
+				&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="ckpn_pushover_notifications_settings[notify_on_free]" value="1" <?php checked( $current['notify_on_free'], '1', true ); ?> /> <?php _e( 'Notify Free Purchases?', 'ckpn-edd' ); ?><br />
 				<input type="checkbox" name="ckpn_pushover_notifications_settings[edd_daily_sales]" value="1" <?php checked( $current['edd_daily_sales'], '1', true ); ?> /> <span><?php _e( 'Daily Sales Report', 'ckpn-edd' ); ?></span> <sup>&dagger;</sup>&nbsp;&nbsp;<?php $this->additional_key_dropdown( 'edd_daily_sales' ); ?><br />
 				<input type="checkbox" id="edd_discount_notices" name="ckpn_pushover_notifications_settings[edd_discount_notices]" value="1" <?php checked( $current['edd_discount_notices'], '1', true ); ?> /> Enable Discount Notifications <?php $this->additional_key_dropdown( 'edd_discount_notices' ); ?>
 				<div id="discount-code-settings" <?php if ( !$current['edd_discount_notices'] ) { ?>style="display: none"<?php } ?>>
@@ -325,7 +350,7 @@ class CKPushoverNotificationsEDD {
 		$options = ckpn_get_options();
 
 		if ( $options['multiple_keys'] )
-			$args['token'] = ckpn_get_application_key_by_setting( 'edd_daily_sales' );
+			$args['token'] = ckpckpn_get_optionsn_get_application_key_by_setting( 'edd_daily_sales' );
 
 		foreach ( $notification_users as $user ) {
 			$args['user'] = $user;
@@ -459,6 +484,10 @@ class CKPushoverNotificationsEDD {
 				$order_total = $payment['amount'];
 			} else {
 				$order_total = edd_get_payment_amount( $payment_id );
+			}
+
+			if ( $order_total == 0 && false === $options['notify_on_free'] ) {
+				return;
 			}
 
 			$message .= sprintf( __( 'Total Sale: %s', 'ckpn-edd' ), edd_currency_filter( edd_format_amount( $order_total ) ) );
@@ -719,4 +748,7 @@ class CKPushoverNotificationsEDD {
 	}
 }
 
-$ckpn_edd_loaded = CKPushoverNotificationsEDD::getInstance();
+function ckpn_load_pushover_edd() {
+	$ckpn_edd_loaded = CKPushoverNotificationsEDD::getInstance();
+}
+add_action( 'plugins_loaded', 'ckpn_load_pushover_edd', 99 );
