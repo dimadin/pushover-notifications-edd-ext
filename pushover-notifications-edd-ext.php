@@ -54,8 +54,8 @@ class CKPushoverNotificationsEDD {
 			add_action( 'init', array( $this, 'ckpn_edd_loaddomain' ) );
 
 			// EDD Hooks
-			add_action( 'edd_complete_purchase', array( $this, 'send_new_sale_notification' ) );
-			add_action( 'edd_complete_purchase', array( $this, 'send_discount_usage' ) );
+			add_action( 'edd_after_payment_actions', array( $this, 'send_new_sale_notification' ) );
+			add_action( 'edd_after_payment_actions', array( $this, 'send_discount_usage' ) );
 
 			if ( is_plugin_active( 'edd-commissions/edd-commissions.php' ) ) {
 				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
@@ -451,7 +451,7 @@ class CKPushoverNotificationsEDD {
 	 * send_new_sale_notification
 	 *
 	 * Hooks onto the EDD on edd_update_payment_status. When the $new_status = complete
-	 * a pushover notificaiton is sent stating such.
+	 * a pushover notification is sent stating such.
 	 *
 	 * @param payment_id - int - the payment ID being altered
 	 *
@@ -462,9 +462,9 @@ class CKPushoverNotificationsEDD {
 
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) && $options['edd_complete_purchase'] ) {
 
-			$payment      = edd_get_payment_meta( $payment_id );
-			$cart_details = edd_get_payment_meta_cart_details( $payment_id );
-			$user_info    = edd_get_payment_meta_user_info( $payment_id );
+			$payment      = new EDD_Payment( $payment_id );
+			$cart_details = $payment->cart_details;
+			$user_info    = $payment->user_info;
 
 			$title = sprintf( __( '%s: New Sale!', 'ckpn-edd' ), get_bloginfo( 'name' ) );
 			$message = '';
@@ -480,11 +480,7 @@ class CKPushoverNotificationsEDD {
 				$message .= __( 'Discount: ', 'ckpn-edd' ) . $user_info['discount'] . "\n";
 			}
 
-			if ( defined( 'EDD_VERSION' ) && version_compare( EDD_VERSION, '1.7', '<' ) ) {
-				$order_total = $payment['amount'];
-			} else {
-				$order_total = edd_get_payment_amount( $payment_id );
-			}
+			$order_total = $payment->total;
 
 			if ( $order_total == 0 && false === $options['notify_on_free'] ) {
 				return;
@@ -495,8 +491,9 @@ class CKPushoverNotificationsEDD {
 			$args = array( 'title' => $title, 'message' => $message, 'html' => 1 );
 
 			// Cha-ching!
-			if ( $options['new_sales_cashregister'] )
+			if ( $options['new_sales_cashregister'] ) {
 				$args['sound'] = 'cashregister';
+			}
 
 			$notification_users = $this->get_users_to_alert();
 
@@ -555,7 +552,7 @@ class CKPushoverNotificationsEDD {
 	 * send_discount_usage
 	 *
 	 * Hooks onto the EDD on edd_update_payment_status. When the $new_status = complete
-	 * a pushover notificaiton is sent stating such.
+	 * a pushover notification is sent stating such.
 	 *
 	 * @param payment_id - int - the payment ID being altered
 	 *
@@ -566,9 +563,8 @@ class CKPushoverNotificationsEDD {
 
 		if ( is_plugin_active( 'pushover-notifications/pushover-notifications.php' ) && $options['edd_discount_notices'] ) {
 
-			$payment      = edd_get_payment_meta( $payment_id );
-			$cart_details = edd_get_payment_meta_cart_details( $payment_id );
-			$user_info    = edd_get_payment_meta_user_info( $payment_id );
+			$payment      = new EDD_Payment( $payment_id );
+			$user_info    = $payment->user_info;
 
 			if ( !isset( $user_info['discount'] ) || $user_info['discount'] == 'none' )
 				return;
@@ -581,8 +577,9 @@ class CKPushoverNotificationsEDD {
 
 			$max_uses = edd_get_discount_max_uses( $discount_id );
 
-			if ( $max_uses == 0 )
+			if ( $max_uses == 0 ) {
 				return;
+			}
 
 			$selected_pct = NULL;
 
