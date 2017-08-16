@@ -37,6 +37,8 @@ class CKPushoverNotificationsEDD {
 			add_action( 'admin_notices', array( $this, 'core_out_of_date_nag' ) );
 		} else {
 
+			$this->plugin_updater();
+
 			// Unify with the settings
 			add_filter( 'ckpn_options_defaults', array( $this, 'add_defaults' ), 1 );
 			register_deactivation_hook( __FILE__, array( $this, 'on_deactivate' ) );
@@ -61,8 +63,6 @@ class CKPushoverNotificationsEDD {
 				add_action( 'eddc_insert_commission', array( $this, 'send_commission_alert' ), 10, 4 );
 			}
 
-			add_action( 'admin_init', array( $this, 'plugin_updater' ) );
-
 		}
 	}
 
@@ -78,18 +78,11 @@ class CKPushoverNotificationsEDD {
 	 * Software Licensing Functions
 	 */
 	public function plugin_updater() {
-		$options = $this->getOptions();
-		// retrieve our license key from the DB
-		$license_key = trim( $options['edd_ckpn_license_key'] );
 
-		// setup the updater
-		$edd_updater = new EDD_SL_Plugin_Updater( EDD_CKPN_STORE_URL, __FILE__, array(
-				'version' 	=> CKPN_EDD_VERSION,
-				'license' 	=> $license_key,
-				'item_name' => EDD_CKPN_SL_PRODUCT_NAME,
-				'author' 	=> 'Chris Klosowski',
-			)
-		);
+		if ( class_exists( 'EDD_License' ) ) {
+			$license = new EDD_License( __FILE__, EDD_CKPN_SL_PRODUCT_NAME, CKPN_EDD_VERSION, 'Chris Klosowski', 'edd_pushover_licensing_license_key', null, 6474 );
+		}
+
 	}
 
 
