@@ -18,6 +18,10 @@ This extension also includes options to alert you when discount codes are nearin
 Pushover is a third-party service that can send notifications to your iOS and Android devices. This add-on integrates with the Pushover service to send you notifications any time a new sale is made through Easy Digital Downloads. It will tell you the item(s) that was sold and the amount of the purchase. It can also send daily alerts with a breakdown of sales and earnings for the day.
 
 == Changelog ==
+= 1.3.1 =
+* NEW: Sales notifications moved to the After Payment Actions introduced in Easy Digital Downloads 2.8.
+* TWEAK: Improved updater integration.
+
 = 1.3 =
 * NEW: Intregation with Software Licensing Extension to identify items when renewed
 * TWEAK: Improved translation integrations
