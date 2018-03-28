@@ -315,26 +315,14 @@ class CKPushoverNotificationsEDD {
 	 * We use date_i18n() to make sure that the date, month, and year provided match that of the local user.
 	 */
 	public function execute_daily_sales() {
-		$day = date_i18n( 'j' ); $month = date_i18n( 'm' ); $year = date_i18n( 'Y' );
-
-		$sales = get_posts(
-			array(
-				'post_type' => 'edd_payment',
-				'posts_per_page' => -1,
-				'day' => $day,
-				'year' => $year,
-				'monthnum' => $month,
-				'meta_key' => '_edd_payment_mode',
-				'meta_value' => 'live'
-			)
-		);
-		$sales_count = 0;
-		if ( $sales ) {
-			$sales_count = count( $sales );
-		}
+		$day   = date_i18n( 'j' );
+		$month = date_i18n( 'm' );
 
 		$title = sprintf( __( '%s: Earnings Report %s', 'ckpn-edd' ), get_bloginfo( 'name' ), date_i18n( get_option( 'date_format' ), strtotime( $month . '/' . $day ) ) );
-		$message = sprintf( __( 'Earnings: %s %sSales: %d', 'ckpn-edd' ), edd_currency_filter( edd_format_amount( edd_get_earnings_by_date( $day, $month, $year ) ) ), "\n", $sales_count );
+
+		$sales    = EDD()->payment_stats->get_sales( 0, 'today', null, array( 'publish', 'edd_subscription' ) );
+		$earnings = EDD()->payment_stats->get_earnings( 0, 'today' );
+		$message  = sprintf( __( 'Earnings: %s %sSales: %d', 'ckpn-edd' ), edd_currency_filter( edd_format_amount( $earnings ) ), "\n", $sales );
 
 		$args = array( 'title' => $title, 'message' => $message );
 
@@ -342,8 +330,9 @@ class CKPushoverNotificationsEDD {
 
 		$options = ckpn_get_options();
 
-		if ( $options['multiple_keys'] )
-			$args['token'] = ckpckpn_get_optionsn_get_application_key_by_setting( 'edd_daily_sales' );
+		if ( $options['multiple_keys'] ) {
+			$args['token'] = ckpn_get_application_key_by_setting( 'edd_daily_sales' );
+		}
 
 		foreach ( $notification_users as $user ) {
 			$args['user'] = $user;
