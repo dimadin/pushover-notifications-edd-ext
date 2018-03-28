@@ -3,11 +3,11 @@ Contributors: cklosows
 Tags: Easy Digital Downloads, Pushover
 Requires at least: 3.0
 Tested up to: 3.8.1
-Stable tag: 1.3
+Stable tag: 1.3.2
 Donate link: https://wp-push.com
 License: GPLv2 or later
 
-Add Push Notificaitons for sales to iPhone and Android Devices
+Add Push Notifications for sales to iPhone and Android Devices
 
 == Description ==
 
@@ -18,12 +18,16 @@ This extension also includes options to alert you when discount codes are nearin
 Pushover is a third-party service that can send notifications to your iOS and Android devices. This add-on integrates with the Pushover service to send you notifications any time a new sale is made through Easy Digital Downloads. It will tell you the item(s) that was sold and the amount of the purchase. It can also send daily alerts with a breakdown of sales and earnings for the day.
 
 == Changelog ==
+= 1.3.2 =
+* FIX: Removed calls to deprecated functions for getting earnings and sales for daily report.
+* NEW: EDD Recurring Payments have title of 'Subscription Renewal' instead of 'New Sale'.
+
 = 1.3.1 =
 * NEW: Sales notifications moved to the After Payment Actions introduced in Easy Digital Downloads 2.8.
 * TWEAK: Improved updater integration.
 
 = 1.3 =
-* NEW: Intregation with Software Licensing Extension to identify items when renewed
+* NEW: Integration with Software Licensing Extension to identify items when renewed
 * TWEAK: Improved translation integrations
 
 = 1.2.9 =
@@ -61,7 +65,7 @@ Pushover is a third-party service that can send notifications to your iOS and An
 * FIX: Fixing bug in 1.2 where core plugin class is not accessible during a core plugin update
 
 = 1.2 =
-* NEW: Option for sales notification to be cashregister sound
+* NEW: Option for sales notification to be cash register sound
 * NEW: Allowing discount code specific notifications
 * FIX: Fixing an issue with cron scheduling.
 

@@ -3,7 +3,7 @@
 Plugin Name: Pushover Notifications for Easy Digital Downloads
 Plugin URI: http://wp-push.com
 Description: Adds Easy Digital Downloads support to Pushover Notifications for WordPress
-Version: 1.3.1
+Version: 1.3.2
 Author: Chris Klosowski
 Author URI: http://wp-push.com
 Text Domain: ckpn_edd
@@ -13,7 +13,7 @@ Text Domain: ckpn_edd
 define( 'CKPN_EDD_PATH', plugin_dir_path( __FILE__ ) );
 
 // plugin version
-define( 'CKPN_EDD_VERSION', '1.3.1' );
+define( 'CKPN_EDD_VERSION', '1.3.2' );
 
 // Define the URL to the plugin folder
 define( 'CKPN_EDD_FOLDER', dirname( plugin_basename( __FILE__ ) ) );
