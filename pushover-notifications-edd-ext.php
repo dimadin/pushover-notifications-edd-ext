@@ -459,7 +459,14 @@ class CKPushoverNotificationsEDD {
 			$cart_details = $payment->cart_details;
 			$user_info    = $payment->user_info;
 
-			$title = sprintf( __( '%s: New Sale!', 'ckpn-edd' ), get_bloginfo( 'name' ) );
+			if ( 'edd_subscription' === $payment->status ) {
+				$title = sprintf( __( '%s: Subscription Renewal!', 'ckpn-edd' ), get_bloginfo( 'name' ) );
+			} else {
+				$title = sprintf( __( '%s: New Sale!', 'ckpn-edd' ), get_bloginfo( 'name' ) );
+			}
+
+			$title = apply_filters( 'ckpn_new_sale_title', $title, $payment );
+
 			$message = '';
 			foreach ( $cart_details as $item ) {
 				$message .= $item['name'] . ': ';
