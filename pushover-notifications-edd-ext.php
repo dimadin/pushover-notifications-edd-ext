@@ -89,6 +89,11 @@ class CKPushoverNotificationsEDD {
 	private function checkCoreVersion() {
 		// Make sure we have the required version of Pushover Notifications core plugin
 		$plugin_folder = get_plugins( '/pushover-notifications' );
+
+		if ( ! $plugin_folder ) {
+			return true;
+		}
+
 		$plugin_file = 'pushover-notifications.php';
 		$core_version = $plugin_folder[$plugin_file]['Version'];
 		$requires = '1.9.3';
