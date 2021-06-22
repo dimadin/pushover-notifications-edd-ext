@@ -370,14 +370,17 @@ class CKPushoverNotificationsEDD {
 		$found_discounts = array( '14' => 0, '7' => 0, '1' => 0 );
 
 		foreach ( $discounts as $discount ) {
-			$send_discount_notification = get_post_meta( $discount->ID, '_ckpn_edd_discount_notify', true );
+			$send_discount_notification = $discount->get_meta( '_ckpn_edd_discount_notify' );
 			if ( $send_discount_notification == 'off' )
 				continue;
 
-			if ( get_post_meta( $discount->ID, '_edd_discount_expiration', true ) == '' )
-				continue;
+			$expiration = $discount->get_expiration();
 
-			$end_date = new DateTime( edd_get_discount_expiration( $discount->ID ), new DateTimeZone( get_option( 'timezone_string' ) ) );
+			if ( $expiration == '' ) {
+				continue;
+			}
+
+			$end_date = new DateTime( $expiration, new DateTimeZone( get_option( 'timezone_string' ) ) );
 			$interval = $current_date->diff( $end_date );
 			$days_left = (int)$interval->format( '%a' );
 			switch ( $days_left ) {
@@ -409,8 +412,8 @@ class CKPushoverNotificationsEDD {
 		if ( $total_found == 1 ) {
 			asort( $found_discounts );
 			$found_discounts = array_reverse( $found_discounts, true );
-
-			$days = array_shift( array_keys( $found_discounts ) );
+			$found_discounts_keys = array_keys( $found_discounts );
+			$days = array_shift( $found_discounts_keys );
 			$days_string = sprintf( _n( 'tomorrow', 'in %d days', $days, 'ckpn-edd' ), $days );
 			$message = sprintf( __( 'You have a discount code expiring %s', 'ckpn-edd' ), $days_string );
 		} elseif ( $total_found > 1 ) {
@@ -565,7 +568,18 @@ class CKPushoverNotificationsEDD {
 
 			$discount_id = edd_get_discount_id_by_code( $user_info['discount'] );
 
-			$send_discount_notification = get_post_meta( $discount_id, '_ckpn_edd_discount_notify', true );
+			if ( ! $discount_id ) {
+				return;
+			}
+
+			$discount = edd_get_discount( $discount_id );
+
+			if ( ! $discount ) {
+				return;
+			}
+
+			$send_discount_notification = $discount->get_meta( '_ckpn_edd_discount_notify' );
+
 			if ( $send_discount_notification == 'off' )
 				return false;
 
@@ -638,7 +652,7 @@ class CKPushoverNotificationsEDD {
 	 */
 
 	public function discount_edit_form( $discount_id, $discount ) {
-		$current_status = get_post_meta( $discount_id, '_ckpn_edd_discount_notify', true );
+		$current_status = $discount->get_meta( '_ckpn_edd_discount_notify' );
 ?>
 		<table class="form-table">
 			<tr class="form-field">
@@ -697,8 +711,17 @@ class CKPushoverNotificationsEDD {
 	 * @return void
 	 */
 	public function save_discount( $discount_details, $discount_id ) {
-		$value = ( $_POST['discount-notifications'] == 'on' ) ? 'on' : 'off';
-		update_post_meta( $discount_id, '_ckpn_edd_discount_notify', $value );
+		// Run only in admin.
+		if ( ! isset( $_POST['edd-discount-nonce'] ) || ! wp_verify_nonce( $_POST['edd-discount-nonce'], 'edd_discount_nonce' ) ) {
+			return;
+		}
+
+		$value    = ( isset( $_POST['discount-notifications'] ) && sanitize_text_field( wp_unslash( $_POST['discount-notifications'] ) ) == 'on' ) ? 'on' : 'off';
+		$discount = edd_get_discount( $discount_id );
+
+		if ( $discount ) {
+			$discount->update_meta( '_ckpn_edd_discount_notify', $value );
+		}
 	}
 
 	/*
