@@ -566,13 +566,7 @@ class CKPushoverNotificationsEDD {
 			if ( !isset( $user_info['discount'] ) || $user_info['discount'] == 'none' )
 				return;
 
-			$discount_id = edd_get_discount_id_by_code( $user_info['discount'] );
-
-			if ( ! $discount_id ) {
-				return;
-			}
-
-			$discount = edd_get_discount( $discount_id );
+			$discount = edd_get_discount_by( 'code', $user_info['discount'] );
 
 			if ( ! $discount ) {
 				return;
@@ -583,7 +577,7 @@ class CKPushoverNotificationsEDD {
 			if ( $send_discount_notification == 'off' )
 				return false;
 
-			$max_uses = edd_get_discount_max_uses( $discount_id );
+			$max_uses = edd_get_discount_max_uses( $discount->ID );
 
 			if ( $max_uses == 0 ) {
 				return;
@@ -592,8 +586,8 @@ class CKPushoverNotificationsEDD {
 			$selected_pct = NULL;
 
 			// Find the current usage
-			$current_uses 	= edd_get_discount_uses( $discount_id );
-			$current_pct 	= ( $current_uses / $max_uses ) * 100;
+			$current_uses = edd_get_discount_uses( $discount->ID );
+			$current_pct  = ( $current_uses / $max_uses ) * 100;
 
 			// What will our new usage count be
 			$new_uses = $current_uses + 1;
