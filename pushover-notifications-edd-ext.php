@@ -371,8 +371,9 @@ class CKPushoverNotificationsEDD {
 
 		foreach ( $discounts as $discount ) {
 			$send_discount_notification = $discount->get_meta( '_ckpn_edd_discount_notify' );
-			if ( $send_discount_notification == 'off' )
+			if ( $send_discount_notification == 'off' ) {
 				continue;
+			}
 
 			$expiration = $discount->get_expiration();
 
@@ -574,8 +575,9 @@ class CKPushoverNotificationsEDD {
 
 			$send_discount_notification = $discount->get_meta( '_ckpn_edd_discount_notify' );
 
-			if ( $send_discount_notification == 'off' )
+			if ( $send_discount_notification == 'off' ) {
 				return false;
+			}
 
 			$max_uses = edd_get_discount_max_uses( $discount->ID );
 
