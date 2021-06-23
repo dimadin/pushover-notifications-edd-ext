@@ -361,7 +361,7 @@ class CKPushoverNotificationsEDD {
 			return;
 
 		$args = array(
-			'post_status' => 'active'
+			'status' => 'active',
 		);
 
 		$discounts = edd_get_discounts( $args );
