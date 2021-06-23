@@ -564,8 +564,9 @@ class CKPushoverNotificationsEDD {
 			$payment      = new EDD_Payment( $payment_id );
 			$user_info    = $payment->user_info;
 
-			if ( !isset( $user_info['discount'] ) || $user_info['discount'] == 'none' )
+			if ( !isset( $user_info['discount'] ) || $user_info['discount'] == 'none' ) {
 				return;
+			}
 
 			$discount = edd_get_discount_by( 'code', $user_info['discount'] );
 
